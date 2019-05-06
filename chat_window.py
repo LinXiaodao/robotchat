@@ -1,6 +1,12 @@
 from tkinter import *
 from pynput.keyboard import Key,Controller,Listener
+import time
+from date import get_cur_time
+from client import CreateSocket
 class CreateWindow:
+    def __init__(self):
+        self.cs = CreateSocket()
+
     def create_window(self):
         #创建窗口
         t = Tk()
@@ -12,7 +18,7 @@ class CreateWindow:
         frmLB = Frame(width=500, height=30)
 
         #发送取消按钮和图片
-        btnSend = Button(frmLB, text='发 送', width = 8, command=self.sendMsg)
+        btnSend = Button(frmLB, text='发 送', width = 8, command=self.getMsg)
         btnCancel = Button(frmLB, text='取消', width = 8, command=self.cancelMsg)
         #按钮和图片
         btnSend.grid(row=2,column=0)
@@ -43,14 +49,26 @@ class CreateWindow:
         #主事件循环
         t.mainloop()
 
-    def sendMsg(self):
+    def getMsg(self):
+        '''获取发送内容'''
+        now = get_cur_time() +'\n' + '我：'
+        sendWord = self.getMsgBox.get('0.0', END) 
+        if len(sendWord) < 2:
+            return
+        self.sendMsg(str(now),sendWord,True) 
+        
+    def sendMsg(self,now,sendWord,isClient=False):
         '''发送消息'''
-        #消息内容
-        sendWord = self.getMsgBox.get('0.0', END)
-        #显示到对话列表
-        self.showMsg.insert(END,sendWord)
+       
+        self.showMsg.insert(END,now + sendWord)
+        respoen_data = self.cs.send_msg_server(sendWord)
+        respon_now = get_cur_time() +'\n' + '机器人：'
+        self.showMsg.insert(END,respon_now + respoen_data)
+        
+        print(respoen_data,'拿到的数据')
         #清空输入框
-        self.cancelMsg()
+        if isClient:
+            self.cancelMsg()
 
     def cancelMsg(self):
         '''清除输入框'''
