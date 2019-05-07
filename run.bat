@@ -1,2 +1,2 @@
-pip install ipython 
+pip install pynput 
 pip install tkinter
