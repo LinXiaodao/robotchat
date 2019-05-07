@@ -38,12 +38,12 @@
 
 
 import requests
+from common.date import get_cur_time
 class Robot:
     def __init__(self):
         self.KEY = '6244875a21b14000b1f350f9145e41f1'
  
     def get_response(self,msg):
-        print(msg)
         apiUrl = 'http://www.tuling123.com/openapi/api'
         data = {
             'key'    : self.KEY,
@@ -51,7 +51,8 @@ class Robot:
         }
         try:
             r = requests.post(apiUrl, data=data).json()
-            return r.get('text')
+            respon_now = get_cur_time() +'\n' + '机器人：'
+            return respon_now + r.get('text')
         except:
             return '机器人挂了'
 # print(get_response('你好'))
